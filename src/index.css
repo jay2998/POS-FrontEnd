@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+:root {
+  color: #0f172a;
+  background:
+    radial-gradient(circle at top left, rgba(20, 184, 166, 0.18), transparent 22%),
+    linear-gradient(180deg, #f7fbfb 0%, #eff8f7 100%);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #0f172a;
+  background: transparent;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
