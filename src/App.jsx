@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import Layout from './components/Layout.jsx'
+import Sidebar from './components/Sidebar.jsx'
 import CategoryPage from './pages/Category.jsx'
 import SubCategoryPage from './pages/SubCategory.jsx'
 import ItemTypePage from './pages/ItemType.jsx'
 import ItemPage from './pages/Item.jsx'
+import Login from './pages/Login.jsx'
+import Register from './pages/Register.jsx'
 
 const DEFAULT_PATH = '/setup/category'
 
@@ -20,17 +22,11 @@ function normalizePath(pathname) {
 
 export default function App() {
   const [pathname, setPathname] = useState(() => normalizePath(window.location.pathname))
+  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true')
+  const [authView, setAuthView] = useState('login')
 
   useEffect(() => {
-    const normalized = normalizePath(window.location.pathname)
-    if (normalized !== window.location.pathname) {
-      window.history.replaceState({}, '', normalized)
-    }
-
-    const handlePopState = () => {
-      setPathname(normalizePath(window.location.pathname))
-    }
-
+    const handlePopState = () => setPathname(normalizePath(window.location.pathname))
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
@@ -39,17 +35,38 @@ export default function App() {
 
   function navigate(nextPath) {
     const targetPath = normalizePath(nextPath)
-    if (targetPath === pathname) {
-      return
-    }
-
     window.history.pushState({}, '', targetPath)
     setPathname(targetPath)
   }
 
+  const handleAuthSuccess = () => {
+    setIsLoggedIn(true)
+    localStorage.setItem('isLoggedIn', 'true')
+  }
+
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+    localStorage.removeItem('isLoggedIn')
+    setAuthView('login')
+  }
+
+  // Auth View (Login/Register)
+  if (!isLoggedIn) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+        {authView === 'login' ? (
+          <Login onLogin={handleAuthSuccess} onSwitchToRegister={() => setAuthView('register')} />
+        ) : (
+          <Register onSwitchToLogin={() => setAuthView('login')} />
+        )}
+      </div>
+    )
+  }
+
+  // Dashboard View — Sidebar owns the layout shell; CurrentPage renders inside it as a child
   return (
-    <Layout currentPath={pathname} onNavigate={navigate}>
+    <Sidebar currentPath={pathname} onNavigate={navigate} onLogout={handleLogout}>
       <CurrentPage />
-    </Layout>
+    </Sidebar>
   )
 }

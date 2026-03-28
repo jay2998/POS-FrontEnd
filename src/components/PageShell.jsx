@@ -1,12 +1,19 @@
-export function PageShell({ title, description, accent, children }) {
+// PageShell — wraps page content in a centred, max-width section.
+// Note: the `title`, `description`, and `accent` props passed by some pages
+// are intentionally unused here; the Sidebar topbar already shows the page title.
+export function PageShell({ children }) {
   return (
-    <section>{children}</section>
+    <section className="w-full space-y-6 pb-20">
+      {children}
+    </section>
   )
 }
 
 export function Card({ children, className = '' }) {
   return (
-    <div className={`rounded-3xl border border-white/80 bg-white/90 p-5 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.45)] backdrop-blur ${className}`}>
+    <div
+      className={`rounded-3xl border border-white/80 bg-white/90 p-5 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.45)] backdrop-blur ${className}`}
+    >
       {children}
     </div>
   )
@@ -16,7 +23,7 @@ export function SectionHeader({ icon, title, description, action }) {
   return (
     <div className="mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-2.5">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
           {icon}
         </div>
         <div>
@@ -30,16 +37,16 @@ export function SectionHeader({ icon, title, description, action }) {
 }
 
 export function StatusAlert({ type = 'error', message }) {
-  if (!message) {
-    return null
-  }
-
+  if (!message) return null
   const themes = {
     error: 'border-rose-100 bg-rose-50 text-rose-700',
     success: 'border-emerald-100 bg-emerald-50 text-emerald-700',
   }
-
-  return <div className={`mb-3 rounded-lg border px-3.5 py-2.5 text-[13px] ${themes[type]}`}>{message}</div>
+  return (
+    <div className={`mb-3 rounded-lg border px-3.5 py-2.5 text-[13px] ${themes[type]}`}>
+      {message}
+    </div>
+  )
 }
 
 export function Field({ label, required = false, hint, children, className = '' }) {
@@ -65,7 +72,7 @@ export function Toggle({ enabled, onChange, label, description }) {
       <button
         type="button"
         onClick={() => onChange(!enabled)}
-        className={`relative inline-flex h-8 w-14 items-center rounded-full transition ${
+        className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full transition ${
           enabled ? 'bg-teal-600' : 'bg-slate-300'
         }`}
       >

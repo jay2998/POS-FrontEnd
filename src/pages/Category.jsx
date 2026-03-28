@@ -3,9 +3,15 @@ import { Card, Field, PageShell, SectionHeader, StatusAlert, Toggle } from '../c
 
 const API = '/api'
 
+function createEmptyForm() {
+  return {
+    category_name: '',
+    is_enable: true,
+  }
+}
+
 export default function CategoryPage() {
-  const [categoryName, setCategoryName] = useState('')
-  const [isEnabled, setIsEnabled] = useState(true)
+  const [form, setForm] = useState(createEmptyForm)
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -20,13 +26,13 @@ export default function CategoryPage() {
   async function fetchCategories() {
     setLoading(true)
     setError('')
-
     try {
       const response = await fetch(`${API}/categories`)
       const data = await response.json()
       setCategories(Array.isArray(data) ? data : data.data || [])
     } catch {
       setError('Failed to load categories.')
+      setCategories([])
     } finally {
       setLoading(false)
     }
@@ -35,7 +41,7 @@ export default function CategoryPage() {
   async function handleSubmit(event) {
     event.preventDefault()
 
-    if (!categoryName.trim()) {
+    if (!form.category_name.trim()) {
       setError('Category name is required.')
       return
     }
@@ -45,40 +51,36 @@ export default function CategoryPage() {
     setSuccess('')
 
     try {
-      const response = await fetch(editId ? `${API}/categories/${editId}` : `${API}/categories`, {
-        method: editId ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          category_name: categoryName.trim(),
-          is_enable: isEnabled ? 1 : 0,
-        }),
-      })
+      const response = await fetch(
+        editId ? `${API}/categories/${editId}` : `${API}/categories`,
+        {
+          method: editId ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            category_name: form.category_name.trim(),
+            is_enable: form.is_enable ? 1 : 0,
+          }),
+        },
+      )
 
-      if (!response.ok) {
-        throw new Error('save category')
-      }
+      if (!response.ok) throw new Error('save category')
 
       setSuccess(editId ? 'Category updated successfully.' : 'Category created successfully.')
       resetForm()
       fetchCategories()
     } catch {
-      setError('Failed to save category. Please check the backend connection.')
+      setError('Failed to save category. Confirm the backend route exists.')
     } finally {
       setSubmitting(false)
     }
   }
 
   async function handleDelete(id) {
-    if (!window.confirm('Delete this category?')) {
-      return
-    }
+    if (!window.confirm('Delete this category?')) return
 
     try {
       const response = await fetch(`${API}/categories/${id}`, { method: 'DELETE' })
-      if (!response.ok) {
-        throw new Error('delete category')
-      }
-
+      if (!response.ok) throw new Error('delete category')
       setSuccess('Category deleted successfully.')
       fetchCategories()
     } catch {
@@ -88,8 +90,10 @@ export default function CategoryPage() {
 
   function handleEdit(category) {
     setEditId(category.id)
-    setCategoryName(category.category_name || '')
-    setIsEnabled(category.is_enable === 1 || category.is_enable === true)
+    setForm({
+      category_name: category.category_name || '',
+      is_enable: category.is_enable === 1 || category.is_enable === true,
+    })
     setError('')
     setSuccess('')
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -97,51 +101,51 @@ export default function CategoryPage() {
 
   function resetForm() {
     setEditId(null)
-    setCategoryName('')
-    setIsEnabled(true)
+    setForm(createEmptyForm())
     setError('')
   }
 
   return (
-    <PageShell
-      title="Category setup"
-      description="Create the top-level POS categories your team will use for item grouping, reporting, and subcategory assignment."
-      accent="from-teal-600 via-emerald-600 to-cyan-700"
-    >
+    <PageShell>
       <div className="space-y-5">
+        {/* Form card */}
         <Card className="border-l-[6px] border-l-teal-500">
           <SectionHeader
             title={editId ? 'Edit category' : 'New category'}
-            description="Keep names short and easy to scan at the counter."
-            icon={<CategoryIcon className="h-6 w-6" />}
+            description="Create or update a primary item classification."
+            icon={
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.53 0 1.04.21 1.41.59l7 7a2 2 0 010 2.82l-7 7a2 2 0 01-2.82 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+            }
           />
 
           <StatusAlert type="error" message={error} />
           <StatusAlert type="success" message={success} />
 
           <form onSubmit={handleSubmit} className="space-y-3.5">
-            <Field label="Category name" required hint="Example: Groceries, Bakery, Pharmacy">
+            <Field label="Category name" required hint="Example: Beverages, Snacks, Dairy">
               <input
                 type="text"
-                value={categoryName}
-                onChange={(event) => setCategoryName(event.target.value)}
+                value={form.category_name}
+                onChange={(e) => setForm((current) => ({ ...current, category_name: e.target.value }))}
                 placeholder="Enter category name"
                 className="h-10 w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 text-[13px] text-slate-700 outline-none transition focus:border-teal-400 focus:ring-3 focus:ring-teal-100"
               />
             </Field>
 
             <Toggle
-              enabled={isEnabled}
-              onChange={setIsEnabled}
+              enabled={form.is_enable}
+              onChange={(value) => setForm((current) => ({ ...current, is_enable: value }))}
               label="Enable category"
-              description="Use the toggle when the category should appear in active POS lists."
+              description="Enabled categories are visible in POS and inventory forms."
             />
 
             <div className="flex flex-wrap justify-end gap-3 pt-1">
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex min-w-36 items-center justify-center rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex min-w-40 items-center justify-center rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? 'Saving...' : editId ? 'Update category' : 'Add category'}
               </button>
@@ -156,11 +160,16 @@ export default function CategoryPage() {
           </form>
         </Card>
 
+        {/* List card */}
         <Card>
           <SectionHeader
             title="Category list"
-            description={`${categories.length} categories available`}
-            icon={<ListIcon className="h-6 w-6" />}
+            description={`${categories.length} categories configured`}
+            icon={
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+              </svg>
+            }
             action={
               <button
                 type="button"
@@ -178,12 +187,12 @@ export default function CategoryPage() {
             <TableState message="No categories found yet." />
           ) : (
             <div className="overflow-hidden rounded-2xl border border-slate-100">
-              <div className="overflow-x-auto lg:max-h-[22rem] lg:overflow-y-auto">
+              <div className="overflow-x-auto lg:max-h-88 lg:overflow-y-auto">
                 <table className="min-w-full divide-y divide-slate-100">
                   <thead className="bg-slate-50">
                     <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                       <th className="px-4 py-4">#</th>
-                      <th className="px-4 py-4">Category</th>
+                      <th className="px-4 py-4">Name</th>
                       <th className="px-4 py-4">Status</th>
                       <th className="px-4 py-4 text-right">Actions</th>
                     </tr>
@@ -216,12 +225,20 @@ export default function CategoryPage() {
 }
 
 function TableState({ message }) {
-  return <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-14 text-center text-sm text-slate-500">{message}</div>
+  return (
+    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-14 text-center text-sm text-slate-500">
+      {message}
+    </div>
+  )
 }
 
 function StatusChip({ enabled }) {
   return (
-    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${enabled ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+    <span
+      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+        enabled ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+      }`}
+    >
       {enabled ? 'Enabled' : 'Disabled'}
     </span>
   )
@@ -232,18 +249,13 @@ function ActionButton({ label, tone, onClick }) {
     teal: 'bg-teal-50 text-teal-700 hover:bg-teal-100',
     rose: 'bg-rose-50 text-rose-700 hover:bg-rose-100',
   }
-
   return (
-    <button type="button" onClick={onClick} className={`rounded-xl px-3 py-2 text-xs font-semibold transition ${tones[tone]}`}>
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-xl px-3 py-2 text-xs font-semibold transition ${tones[tone]}`}
+    >
       {label}
     </button>
   )
-}
-
-function CategoryIcon({ className }) {
-  return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.53 0 1.04.21 1.41.59l7 7a2 2 0 010 2.82l-7 7a2 2 0 01-2.82 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" /></svg>
-}
-
-function ListIcon({ className }) {
-  return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
 }

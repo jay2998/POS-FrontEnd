@@ -238,7 +238,7 @@ export default function SubCategoryPage() {
             <TableState message="No subcategories found yet." />
           ) : (
             <div className="overflow-hidden rounded-2xl border border-slate-100">
-              <div className="overflow-x-auto lg:max-h-[22rem] lg:overflow-y-auto">
+              <div className="overflow-x-auto lg:max-h-88 lg:overflow-y-auto">
                 <table className="min-w-full divide-y divide-slate-100">
                   <thead className="bg-slate-50">
                     <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
