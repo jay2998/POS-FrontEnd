@@ -9,6 +9,7 @@ import ExpenseVoucherPage from './pages/ExpenseVoucher.jsx'
 import ExpenseSalesReportPage from './pages/ExpenseSalesReport.jsx'
 import ManufacturerPage from './pages/Manufacturer.jsx'
 import SupplierPage from './pages/Supplier.jsx'
+import CustomerPage from './pages/Customer.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 
@@ -21,6 +22,7 @@ const PAGE_MAP = {
   '/setup/item': ItemPage,
   '/setup/manufacturer': ManufacturerPage,
   '/setup/supplier': SupplierPage,
+  '/setup/customer': CustomerPage,
   '/expenses/head': ExpenseHeadPage,
   '/expenses/voucher': ExpenseVoucherPage,
   '/expenses/report': ExpenseSalesReportPage,

@@ -85,3 +85,49 @@ export function Toggle({ enabled, onChange, label, description }) {
     </div>
   )
 }
+
+export function TableState({ message }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-14 text-center text-sm text-slate-500">
+      {message}
+    </div>
+  )
+}
+
+export function StatusChip({ enabled, label, colorClass }) {
+  if (label) {
+    return (
+      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${colorClass}`}>
+        {label}
+      </span>
+    )
+  }
+  return (
+    <span
+      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+        enabled ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+      }`}
+    >
+      {enabled ? 'Enabled' : 'Disabled'}
+    </span>
+  )
+}
+
+export function ActionButton({ label, tone, onClick, disabled }) {
+  const tones = {
+    teal: 'bg-teal-50 text-teal-700 hover:bg-teal-100 disabled:opacity-50 disabled:hover:bg-teal-50',
+    rose: 'bg-rose-50 text-rose-700 hover:bg-rose-100 disabled:opacity-50 disabled:hover:bg-rose-50',
+    amber: 'bg-amber-50 text-amber-700 hover:bg-amber-100 disabled:opacity-50 disabled:hover:bg-amber-50',
+    indigo: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 disabled:opacity-50 disabled:hover:bg-indigo-50',
+  }
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`rounded-xl px-3 py-2 text-xs font-semibold transition ${tones[tone] || tones.teal}`}
+    >
+      {label}
+    </button>
+  )
+}
