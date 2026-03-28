@@ -4,6 +4,9 @@ import CategoryPage from './pages/Category.jsx'
 import SubCategoryPage from './pages/SubCategory.jsx'
 import ItemTypePage from './pages/ItemType.jsx'
 import ItemPage from './pages/Item.jsx'
+import ExpenseHeadPage from './pages/ExpenseHead.jsx'
+import ExpenseVoucherPage from './pages/ExpenseVoucher.jsx'
+import ExpenseSalesReportPage from './pages/ExpenseSalesReport.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 
@@ -14,6 +17,9 @@ const PAGE_MAP = {
   '/setup/subcategory': SubCategoryPage,
   '/setup/item-type': ItemTypePage,
   '/setup/item': ItemPage,
+  '/expenses/head': ExpenseHeadPage,
+  '/expenses/voucher': ExpenseVoucherPage,
+  '/expenses/report': ExpenseSalesReportPage,
 }
 
 function normalizePath(pathname) {

@@ -25,6 +25,24 @@ const NAV_ITEMS = [
     description: 'Billing and stock behaviour',
     icon: ItemTypeIcon,
   },
+  {
+    path: '/expenses/head',
+    label: 'Expense Head',
+    description: 'Category management',
+    icon: ExpenseHeadIcon,
+  },
+  {
+    path: '/expenses/voucher',
+    label: 'Expense Voucher',
+    description: 'Record an expense',
+    icon: ExpenseVoucherIcon,
+  },
+  {
+    path: '/expenses/report',
+    label: 'Expense Report',
+    description: 'Sales vs Expenses',
+    icon: ExpenseReportIcon,
+  },
 ]
 
 export default function Sidebar({ currentPath, onNavigate, onLogout, children }) {
@@ -224,6 +242,31 @@ function MenuIcon({ className }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  )
+}
+
+function ExpenseHeadIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+    </svg>
+  )
+}
+
+function ExpenseVoucherIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 14l6-6m-3-3h6v6m-9 9l-6-6 6-6" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 10V5a2 2 0 012-2h4l4 4h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+    </svg>
+  )
+}
+
+function ExpenseReportIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
     </svg>
   )
 }
