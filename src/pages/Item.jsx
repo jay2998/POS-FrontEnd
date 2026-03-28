@@ -310,7 +310,7 @@ export default function ItemPage() {
             </div>
           </SectionCard>
 
-          <div className="grid gap-2 xl:grid-cols-[minmax(0,1.1fr)_270px_205px]">
+          <div className="grid gap-2 items-start xl:grid-cols-[minmax(0,1.1fr)_270px_205px]">
             <SectionCard color="emerald" title="Product image">
               <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-2.5 transition hover:border-teal-300 hover:bg-teal-50/40">
                 <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
@@ -334,7 +334,7 @@ export default function ItemPage() {
             </SectionCard>
 
             <SectionCard color="lime" title="Actions">
-              <div className="flex h-full flex-col justify-center gap-1.5">
+              <div className="flex flex-col justify-center gap-1.5">
                 <button
                   type="submit"
                   disabled={submitting}

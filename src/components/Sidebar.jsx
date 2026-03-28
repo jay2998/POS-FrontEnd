@@ -26,6 +26,18 @@ const NAV_ITEMS = [
     icon: ItemTypeIcon,
   },
   {
+    path: '/setup/manufacturer',
+    label: 'Manufacturer',
+    description: 'Brand registration',
+    icon: IndustryIcon,
+  },
+  {
+    path: '/setup/supplier',
+    label: 'Supplier',
+    description: 'Vendor management',
+    icon: TruckIcon,
+  },
+  {
     path: '/expenses/head',
     label: 'Expense Head',
     description: 'Category management',
@@ -267,6 +279,22 @@ function ExpenseReportIcon({ className }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+    </svg>
+  )
+}
+
+function IndustryIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+  )
+}
+
+function TruckIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l3 5v6H8m12-11V5H3v13h2m0 0a2 2 0 104 0m-4 0a2 2 0 114 0m7 0a2 2 0 104 0m-4 0a2 2 0 114 0M8 7H3" />
     </svg>
   )
 }
