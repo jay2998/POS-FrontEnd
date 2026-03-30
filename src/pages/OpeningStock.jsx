@@ -222,9 +222,9 @@ export default function OpeningStockPage() {
         {/* 4 Cards Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <MetricCard title="Total Items" value={totalItems.toLocaleString()} valueColor="text-teal-500" />
-          <MetricCard title="Stock on Hand (SOH)" value={totalStock.toLocaleString()} valueColor="text-amber-500" />
-          <MetricCard title="Purchase Value" value={`Rs ${purchaseValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} valueColor="text-sky-500" />
-          <MetricCard title="Sale Value" value={`Rs ${saleValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} valueColor="text-emerald-500" />
+          <MetricCard title="Stock on Hand (SOH)" value={totalStock.toLocaleString()} valueColor="text-teal-500" />
+          <MetricCard title="Purchase Value" value={`Rs ${purchaseValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} valueColor="text-teal-600" />
+          <MetricCard title="Sale Value" value={`Rs ${saleValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} valueColor="text-teal-600" />
         </div>
 
         {/* Filter Stock */}
@@ -355,8 +355,8 @@ export default function OpeningStockPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-slate-600">{item.item_unit || '-'}</td>
-                      <td className="px-4 py-3 text-right font-semibold text-blue-600">Rs {Number(item.purchase_price || 0).toFixed(2)}</td>
-                      <td className="px-4 py-3 text-right font-semibold text-emerald-600">Rs {Number(item.sale_price || 0).toFixed(2)}</td>
+                      <td className="px-4 py-3 text-right font-semibold text-teal-600">Rs {Number(item.purchase_price || 0).toFixed(2)}</td>
+                      <td className="px-4 py-3 text-right font-semibold text-teal-600">Rs {Number(item.sale_price || 0).toFixed(2)}</td>
                       <td className="px-4 py-3 text-center">
                         <div className="relative inline-block">
                           <input
