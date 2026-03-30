@@ -69,6 +69,7 @@ export default function BookingsPage() {
   const [bookingDate, setBookingDate] = useState('')
   const [bookingTime, setBookingTime] = useState('')
   const [invoiceItems, setInvoiceItems] = useState([createEmptyRow()])
+  const [showCustomerDropdown, setShowCustomerDropdown] = useState(false)
   
   // Payment State
   const [paymentMethod, setPaymentMethod] = useState('Cash')
@@ -117,22 +118,35 @@ export default function BookingsPage() {
   }
 
   // --- Customer Autofill Logic ---
-  useEffect(() => {
-    if (mobileNumber.length >= 4) {
-      const found = customers.find(c => c.mobile_number === mobileNumber || c.mobile_number?.includes(mobileNumber))
-      if (found && mobileNumber === found.mobile_number) {
-        setCustomerName(found.customer_name)
-        setCustomerId(found.id)
-        if (found.address) setAddress(found.address)
-      } else if (!found) {
-        setCustomerName('')
-        setCustomerId(null)
-      }
+  const matchingCustomers = useMemo(() => {
+    if (mobileNumber.length < 4) return []
+    return customers.filter(c => 
+      c.mobile_number?.toLowerCase().includes(mobileNumber.toLowerCase()) || 
+      c.customer_name?.toLowerCase().includes(mobileNumber.toLowerCase())
+    )
+  }, [mobileNumber, customers])
+
+  const handleMobileChange = (e) => {
+    const val = e.target.value
+    setMobileNumber(val)
+    if (val.length >= 4) {
+      setShowCustomerDropdown(true)
     } else {
+      setShowCustomerDropdown(false)
       setCustomerName('')
       setCustomerId(null)
     }
-  }, [mobileNumber, customers])
+    // If user starts typing after selecting, clear the linked ID because it's modified
+    if (customerId) setCustomerId(null)
+  }
+
+  const handleSelectCustomer = (customer) => {
+    setMobileNumber(customer.mobile_number)
+    setCustomerName(customer.customer_name)
+    setCustomerId(customer.id)
+    if (customer.address) setAddress(customer.address)
+    setShowCustomerDropdown(false)
+  }
 
   // --- Calculations ---
   const subTotal = useMemo(() => {
@@ -259,13 +273,31 @@ export default function BookingsPage() {
             <SectionCard title="Booking Details">
               <div className="flex flex-wrap gap-5 items-start">
                 <Field label="Mobile Number" required>
-                  <input
-                    type="tel"
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)}
-                    placeholder="e.g. 03001234567"
-                    className="h-8 w-48 rounded-md border border-slate-300 bg-white px-2.5 text-[12px] outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100"
-                  />
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      value={mobileNumber}
+                      onChange={handleMobileChange}
+                      onFocus={() => { if (mobileNumber.length >= 4) setShowCustomerDropdown(true) }}
+                      onBlur={() => setTimeout(() => setShowCustomerDropdown(false), 200)}
+                      placeholder="e.g. 03001234567"
+                      className="h-8 w-48 rounded-md border border-slate-300 bg-white px-2.5 text-[12px] outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100 relative z-10"
+                    />
+                    {showCustomerDropdown && matchingCustomers.length > 0 && (
+                      <ul className="absolute left-0 top-full mt-1 max-h-48 w-64 overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-xl z-50">
+                        {matchingCustomers.map(c => (
+                          <li
+                            key={c.id}
+                            onClick={() => handleSelectCustomer(c)}
+                            className="block w-full cursor-pointer px-3 py-2 text-left hover:bg-teal-50 transition"
+                          >
+                            <p className="text-[13px] font-semibold text-slate-800">{c.customer_name}</p>
+                            <p className="text-[11px] text-slate-500">{c.mobile_number}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </Field>
                 <Field label="Customer Name" required hint={customerId ? "Auto-filled from registry" : "New walk-in customer"}>
                   <input
