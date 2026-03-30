@@ -177,7 +177,7 @@ export default function ExpenseHeadPage() {
               </div>
             </SectionCard>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-center gap-2 pt-2">
               <button
                 type="button"
                 onClick={resetForm}
