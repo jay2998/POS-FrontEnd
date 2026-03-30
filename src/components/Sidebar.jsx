@@ -14,6 +14,12 @@ const NAV_ITEMS = [
     icon: ClipboardDocumentListIcon,
   },
   {
+    path: '/stock/expiry-tags',
+    label: 'Expiry Tags',
+    description: 'MFG & expiry tracking',
+    icon: TagIcon,
+  },
+  {
     path: '/setup/category',
     label: 'Category',
     description: 'Primary classification',
@@ -365,6 +371,18 @@ function ClipboardDocumentListIcon({ className }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+    </svg>
+  )
+}
+
+function TagIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M7 7h.01M3 11l8.586 8.586a2 2 0 002.828 0L21 13.414a2 2 0 000-2.828L12.414 2H5a2 2 0 00-2 2v7z"
+      />
     </svg>
   )
 }

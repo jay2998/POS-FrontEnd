@@ -14,6 +14,7 @@ import SalesPage from './pages/Sales.jsx'
 import BookingsPage from './pages/Bookings.jsx'
 import PurchasePage from './pages/Purchase.jsx'
 import OpeningStockPage from './pages/OpeningStock.jsx'
+import ExpiryTagsPage from './pages/ExpiryTags.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 
@@ -25,6 +26,7 @@ const PAGE_MAP = {
   '/setup/item-type': ItemTypePage,
   '/setup/item': ItemPage,
   '/stock/opening': OpeningStockPage,
+  '/stock/expiry-tags': ExpiryTagsPage,
   '/setup/manufacturer': ManufacturerPage,
   '/setup/supplier': SupplierPage,
   '/setup/customer': CustomerPage,
