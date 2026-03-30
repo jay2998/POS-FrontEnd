@@ -13,6 +13,7 @@ import CustomerPage from './pages/Customer.jsx'
 import SalesPage from './pages/Sales.jsx'
 import BookingsPage from './pages/Bookings.jsx'
 import PurchasePage from './pages/Purchase.jsx'
+import OpeningStockPage from './pages/OpeningStock.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 
@@ -23,6 +24,7 @@ const PAGE_MAP = {
   '/setup/subcategory': SubCategoryPage,
   '/setup/item-type': ItemTypePage,
   '/setup/item': ItemPage,
+  '/stock/opening': OpeningStockPage,
   '/setup/manufacturer': ManufacturerPage,
   '/setup/supplier': SupplierPage,
   '/setup/customer': CustomerPage,
