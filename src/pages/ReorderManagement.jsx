@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Card, PageShell, SectionHeader, StatusAlert, TableState } from '../components/PageShell.jsx'
 
-const API_ITEMS = '/api/items'
-const API_CATEGORIES = '/api/categories'
+const API_REORDERS = '/api/reorders'
 
 function ReorderIcon({ className }) {
   return (
@@ -98,8 +97,7 @@ const STATUS_TABS = [
 ]
 
 export default function ReorderManagementPage() {
-  const [items, setItems] = useState([])
-  const [categories, setCategories] = useState([])
+  const [reorders, setReorders] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -120,54 +118,43 @@ export default function ReorderManagementPage() {
     setLoading(true)
     setError('')
     try {
-      const [itmRes, catRes] = await Promise.all([
-        fetch(API_ITEMS).catch(() => ({ ok: false })),
-        fetch(API_CATEGORIES).catch(() => ({ ok: false })),
-      ])
-      if (itmRes.ok) {
-        const d = await itmRes.json()
-        setItems(toArray(d))
-      } else {
-        setItems([])
-      }
-      if (catRes.ok) {
-        const d = await catRes.json()
-        setCategories(toArray(d))
-      } else {
-        setCategories([])
-      }
+      const res = await fetch(API_REORDERS).catch(() => ({ ok: false }))
+      if (!res.ok) throw new Error('Failed to load reorders')
+      const d = await res.json()
+      setReorders(toArray(d))
     } catch {
       setError('Unable to load reorder data.')
+      setReorders([])
     } finally {
       setLoading(false)
     }
   }
 
-  const categoryNameById = useMemo(() => {
-    const map = new Map()
-    categories.forEach((c) => map.set(String(c.id), c.category_name ?? c.name ?? String(c.id)))
-    return map
-  }, [categories])
-
   const enrichedRows = useMemo(() => {
-    return items.map((i) => {
-      const stock = Number(i.opening_stock ?? i.stock ?? 0) || 0
-      const reorderLevel = Number(i.reorder_level ?? i.reorderLevel ?? 0) || 0
+    return reorders.map((r) => {
+      const key = r.id ?? r.item_id
+      const stock = Number(r.current_stock ?? 0) || 0
+      const reorderLevel = Number(r.reorder_level ?? 0) || 0
+      const normalizedStatus = String(r.status ?? '').toLowerCase()
       return {
-        id: i.id,
-        item_name: i.item_name ?? i.name ?? '-',
-        barcode: i.barcode ?? i.item_code ?? i.code ?? i.id,
-        category_id: i.category_id,
-        category_name: categoryNameById.get(String(i.category_id)) ?? '-',
+        key,
+        id: key,
+        item_name: r.item_name ?? '-',
+        barcode: r.barcode ?? '',
+        category_id: r.category_id,
+        category_name: r.category ?? '-',
         stock,
-        unit: i.item_unit ?? i.unit ?? '-',
+        unit: r.unit ?? '-',
         reorder_level: reorderLevel,
-        order_qty: orderQtyById[i.id] ?? '',
-        status: statusById[i.id] ?? (stock <= reorderLevel ? 'pending' : 'received'),
-        note: noteById[i.id] ?? '',
+        purchase_price: Number(r.purchase_price ?? 0) || 0,
+        sale_price: Number(r.sale_price ?? 0) || 0,
+        base_order_qty: Number(r.reorder_qty ?? 0) || 0,
+        order_qty: orderQtyById[key] ?? (Number(r.reorder_qty ?? 0) || 0),
+        status: statusById[key] ?? normalizedStatus,
+        note: noteById[key] ?? (r.notes ?? ''),
       }
     })
-  }, [items, categoryNameById, orderQtyById, statusById, noteById])
+  }, [reorders, orderQtyById, statusById, noteById])
 
   const filteredRows = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -193,7 +180,7 @@ export default function ReorderManagementPage() {
   }, [enrichedRows])
 
   const totalValue = useMemo(() => {
-    return enrichedRows.reduce((sum, r) => sum + (Number(r.order_qty) || 0) * 0, 0)
+    return enrichedRows.reduce((sum, r) => sum + (Number(r.order_qty) || 0) * (Number(r.purchase_price) || 0), 0)
   }, [enrichedRows])
 
   function toggleSelected(id) {
