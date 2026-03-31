@@ -1,110 +1,53 @@
 import { useMemo, useState } from 'react'
 
-const NAV_ITEMS = [
+const NAV_SECTIONS = [
   {
-    path: '/setup/item',
-    label: 'Add Item',
-    description: 'Product form setup',
-    icon: ItemFormIcon,
+    heading: 'Setup',
+    items: [
+      { path: '/setup/item', label: 'Add Item', description: 'Product form setup', icon: ItemFormIcon },
+      { path: '/setup/category', label: 'Category', description: 'Primary classification', icon: CategoryIcon },
+      { path: '/setup/subcategory', label: 'Sub Category', description: 'Linked to category', icon: SubCategoryIcon },
+      { path: '/setup/item-type', label: 'Item Type', description: 'Billing & stock behaviour', icon: ItemTypeIcon },
+      { path: '/setup/manufacturer', label: 'Manufacturer', description: 'Brand registration', icon: IndustryIcon },
+      { path: '/setup/supplier', label: 'Supplier', description: 'Vendor management', icon: TruckIcon },
+      { path: '/setup/customer', label: 'Customer', description: 'Client registries', icon: UserIcon },
+    ],
   },
   {
-    path: '/stock/opening',
-    label: 'Opening Stock',
-    description: 'Initial stock quantities',
-    icon: ClipboardDocumentListIcon,
+    heading: 'Stock',
+    items: [
+      { path: '/stock/opening', label: 'Opening Stock', description: 'Initial stock quantities', icon: ClipboardDocumentListIcon },
+      { path: '/stock/expiry-tags', label: 'Expiry Tags', description: 'MFG & expiry tracking', icon: TagIcon },
+      { path: '/stock/reorder', label: 'Reorder Mgmt', description: 'Reorder level workflow', icon: ReorderListIcon },
+    ],
   },
   {
-    path: '/stock/expiry-tags',
-    label: 'Expiry Tags',
-    description: 'MFG & expiry tracking',
-    icon: TagIcon,
+    heading: 'Sales & Purchases',
+    items: [
+      { path: '/sales/invoice', label: 'Sales', description: 'Invoice & billing', icon: ShoppingCartIcon },
+      { path: '/purchases/entry', label: 'Purchase Entry', description: 'Stock inward (GRN)', icon: ArchiveBoxIcon },
+      { path: '/bookings', label: 'Bookings', description: 'Advance reservations', icon: CalendarIcon },
+    ],
   },
   {
-    path: '/stock/reorder',
-    label: 'Reorder Management',
-    description: 'Reorder level workflow',
-    icon: ReorderListIcon,
-  },
-  {
-    path: '/setup/category',
-    label: 'Category',
-    description: 'Primary classification',
-    icon: CategoryIcon,
-  },
-  {
-    path: '/setup/subcategory',
-    label: 'Sub Category',
-    description: 'Linked to category',
-    icon: SubCategoryIcon,
-  },
-  {
-    path: '/setup/item-type',
-    label: 'Item Type',
-    description: 'Billing and stock behaviour',
-    icon: ItemTypeIcon,
-  },
-  {
-    path: '/setup/manufacturer',
-    label: 'Manufacturer',
-    description: 'Brand registration',
-    icon: IndustryIcon,
-  },
-  {
-    path: '/setup/supplier',
-    label: 'Supplier',
-    description: 'Vendor management',
-    icon: TruckIcon,
-  },
-  {
-    path: '/setup/customer',
-    label: 'Customer',
-    description: 'Client registries',
-    icon: UserIcon,
-  },
-  {
-    path: '/sales/invoice',
-    label: 'Sales',
-    description: 'Invoice & billing',
-    icon: ShoppingCartIcon,
-  },
-  {
-    path: '/purchases/entry',
-    label: 'Purchase Entry',
-    description: 'Stock inward logs (GRN)',
-    icon: ArchiveBoxIcon,
-  },
-  {
-    path: '/bookings',
-    label: 'Bookings',
-    description: 'Advance reservations',
-    icon: CalendarIcon,
-  },
-  {
-    path: '/expenses/head',
-    label: 'Expense Head',
-    description: 'Category management',
-    icon: ExpenseHeadIcon,
-  },
-  {
-    path: '/expenses/voucher',
-    label: 'Expense Voucher',
-    description: 'Record an expense',
-    icon: ExpenseVoucherIcon,
-  },
-  {
-    path: '/expenses/report',
-    label: 'Expense Report',
-    description: 'Sales vs Expenses',
-    icon: ExpenseReportIcon,
+    heading: 'Expenses',
+    items: [
+      { path: '/expenses/head', label: 'Expense Head', description: 'Category management', icon: ExpenseHeadIcon },
+      { path: '/expenses/voucher', label: 'Expense Voucher', description: 'Record an expense', icon: ExpenseVoucherIcon },
+      { path: '/expenses/report', label: 'Expense Report', description: 'Sales vs Expenses', icon: ExpenseReportIcon },
+    ],
   },
 ]
+
+// Flatten for lookups
+const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap((s) => s.items)
 
 export default function Sidebar({ currentPath, onNavigate, onLogout, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const compactPage = currentPath === '/setup/item'
 
   const currentItem = useMemo(
-    () => NAV_ITEMS.find((item) => item.path === currentPath) || NAV_ITEMS[0],
+    () => ALL_NAV_ITEMS.find((item) => item.path === currentPath) || ALL_NAV_ITEMS[0],
     [currentPath],
   )
 
@@ -117,60 +60,66 @@ export default function Sidebar({ currentPath, onNavigate, onLogout, children })
         } transition-all duration-300`}
       >
         {/* Logo */}
-        <div className="border-b border-slate-100 px-5 py-5">
+        <div className="border-b border-slate-100 px-5 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-200">
-              <span className="text-sm font-bold tracking-[0.3em] text-white">POS</span>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-200">
+              <span className="text-xs font-bold tracking-[0.3em] text-white">POS</span>
             </div>
             {sidebarOpen && (
               <div>
                 <p className="text-sm font-semibold text-slate-900">POS System</p>
-                <p className="text-xs text-slate-500">Setup management</p>
+                <p className="text-[11px] text-slate-500">Inventory management</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Nav */}
-        <div className="flex-1 overflow-y-auto px-3 py-5">
-          <div className={`px-3 ${sidebarOpen ? '' : 'text-center'}`}>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
-              {sidebarOpen ? 'Navigation' : '···'}
-            </p>
-          </div>
-          <nav className="mt-4 space-y-2">
-            {NAV_ITEMS.map(({ path, label, description, icon: Icon }) => {
-              const isActive = path === currentPath
-              return (
-                <button
-                  key={path}
-                  type="button"
-                  onClick={() => onNavigate(path)}
-                  className={`flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition ${
-                    isActive
-                      ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-200'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
-                >
-                  <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-teal-50 text-teal-600'
-                    }`}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  {sidebarOpen && (
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold">{label}</p>
-                      <p className={`truncate text-xs ${isActive ? 'text-teal-50' : 'text-slate-400'}`}>
-                        {description}
-                      </p>
-                    </div>
-                  )}
-                </button>
-              )
-            })}
-          </nav>
+        <div className="flex-1 overflow-y-auto px-3 py-3">
+          {NAV_SECTIONS.map((section) => (
+            <div key={section.heading} className="mb-3">
+              {/* Section heading */}
+              <div className={`px-3 pb-1.5 pt-2 ${sidebarOpen ? '' : 'text-center'}`}>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                  {sidebarOpen ? section.heading : '···'}
+                </p>
+              </div>
+              {/* Section items */}
+              <nav className="space-y-0.5">
+                {section.items.map(({ path, label, description, icon: Icon }) => {
+                  const isActive = path === currentPath
+                  return (
+                    <button
+                      key={path}
+                      type="button"
+                      onClick={() => onNavigate(path)}
+                      className={`flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition ${
+                        isActive
+                          ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-md shadow-teal-200'
+                          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                      }`}
+                    >
+                      <div
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                          isActive ? 'bg-white/20 text-white' : 'bg-teal-50 text-teal-600'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      {sidebarOpen && (
+                        <div className="min-w-0">
+                          <p className="truncate text-[13px] font-semibold leading-tight">{label}</p>
+                          <p className={`truncate text-[11px] leading-tight ${isActive ? 'text-teal-50' : 'text-slate-400'}`}>
+                            {description}
+                          </p>
+                        </div>
+                      )}
+                    </button>
+                  )
+                })}
+              </nav>
+            </div>
+          ))}
         </div>
 
         {/* Collapse toggle */}
