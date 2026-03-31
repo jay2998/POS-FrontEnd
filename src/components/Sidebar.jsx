@@ -19,6 +19,7 @@ const NAV_SECTIONS = [
       { path: '/stock/opening', label: 'Opening Stock', description: 'Initial stock quantities', icon: ClipboardDocumentListIcon },
       { path: '/stock/expiry-tags', label: 'Expiry Tags', description: 'MFG & expiry tracking', icon: TagIcon },
       { path: '/stock/reorder', label: 'Reorder Mgmt', description: 'Reorder level workflow', icon: ReorderListIcon },
+      { path: '/stock/closing', label: 'Closing Stock', description: 'End-of-period balances', icon: ClosingStockIcon },
     ],
   },
   {
@@ -346,6 +347,14 @@ function ReorderListIcon({ className }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h10M7 12h10M7 17h10M5 7h.01M5 12h.01M5 17h.01" />
+    </svg>
+  )
+}
+
+function ClosingStockIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
     </svg>
   )
 }

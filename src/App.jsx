@@ -16,6 +16,7 @@ import PurchasePage from './pages/Purchase.jsx'
 import OpeningStockPage from './pages/OpeningStock.jsx'
 import ExpiryTagsPage from './pages/ExpiryTags.jsx'
 import ReorderManagementPage from './pages/ReorderManagement.jsx'
+import ClosingStockPage from './pages/ClosingStock.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 
@@ -29,6 +30,7 @@ const PAGE_MAP = {
   '/stock/opening': OpeningStockPage,
   '/stock/expiry-tags': ExpiryTagsPage,
   '/stock/reorder': ReorderManagementPage,
+  '/stock/closing': ClosingStockPage,
   '/setup/manufacturer': ManufacturerPage,
   '/setup/supplier': SupplierPage,
   '/setup/customer': CustomerPage,
