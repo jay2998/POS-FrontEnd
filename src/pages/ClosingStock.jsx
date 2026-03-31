@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Card, PageShell, StatusAlert, TableState } from '../components/PageShell.jsx'
 
-const API_ITEMS = '/api/items'
+const API_ITEMS = '/api/item-details'
 const API_CATEGORIES = '/api/categories'
 const API_SUPPLIERS = '/api/suppliers'
-// Future backend endpoints — currently returns empty arrays gracefully
-const API_CLOSING_STOCK = '/api/closing-stock'
+const API_STOCK_REPORT = '/api/reports/stock'
+const API_STOCK_SNAPSHOT = '/api/reports/snapshot'
 
 function RefreshIcon({ className }) {
   return (
@@ -35,6 +35,14 @@ function PrinterIcon({ className }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M6 9V4h12v5M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v6H6v-6z" />
+    </svg>
+  )
+}
+
+function SaveIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
     </svg>
   )
 }
@@ -89,21 +97,23 @@ export default function ClosingStockPage() {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [dateFilter])
 
   async function fetchData() {
     setLoading(true)
     setError('')
     try {
-      const [itmRes, catRes, supRes] = await Promise.all([
+      const [itmRes, catRes, supRes, reportRes] = await Promise.all([
         fetch(API_ITEMS).catch(() => ({ ok: false })),
         fetch(API_CATEGORIES).catch(() => ({ ok: false })),
         fetch(API_SUPPLIERS).catch(() => ({ ok: false })),
+        fetch(`${API_STOCK_REPORT}?date=${dateFilter}`).catch(() => ({ ok: false })),
       ])
 
       let nextItems = []
       let nextCategories = []
       let nextSuppliers = []
+      let reportData = []
 
       if (itmRes.ok) {
         const d = await itmRes.json()
@@ -117,13 +127,74 @@ export default function ClosingStockPage() {
         const d = await supRes.json()
         nextSuppliers = Array.isArray(d) ? d : d.data || []
       }
+      if (reportRes.ok) {
+        reportData = await reportRes.json()
+      }
 
-      setItems(nextItems)
+      // Merge report data into items
+      const nextAdjustments = {}
+      const merged = nextItems.map(item => {
+        const report = reportData.find(r => r.id === item.id)
+        if (report?.adjustment) {
+          nextAdjustments[item.id] = report.adjustment
+        }
+        return {
+          ...item,
+          opening_stock_val: report?.opening_stock ?? item.stock ?? 0,
+          purchases_in: report?.total_purchases ?? 0,
+          sales_out: report?.total_sales ?? 0,
+          current_stock: report?.current_stock ?? item.stock ?? 0,
+          is_snapshot: report?.is_snapshot ?? false
+        }
+      })
+
+      setItems(merged)
+      setAdjustmentById(nextAdjustments)
       setCategories(nextCategories)
       setSuppliers(nextSuppliers)
+
     } catch (e) {
       console.error(e)
       setError('Unable to load stock data.')
+    }
+    setLoading(false)
+  }
+
+  async function handleSaveSnapshot() {
+    if (!window.confirm(`Save stock snapshot for ${dateFilter}? This will freeze the daily balances.`)) return
+    
+    setLoading(true)
+    try {
+      const payload = {
+        closing_date: dateFilter,
+        items: enrichedItems.map(i => ({
+          id: i.id,
+          opening_stock: i.opening_stock_val,
+          total_purchases: i.purchases_in,
+          total_sales: i.sales_out,
+          adjustment: i.adjustment,
+          calc_closing: i.closing_stock,
+          purchase_price: i.purchase_price,
+          sale_price: i.sale_price
+        }))
+      }
+
+      const res = await fetch(API_STOCK_SNAPSHOT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+
+      if (res.ok) {
+        alert('Snapshot saved successfully!')
+        fetchData()
+      } else {
+        const err = await res.json()
+        setError(err.message || 'Failed to save snapshot.')
+      }
+    } catch (e) {
+      console.error(e)
+      setError('Error communicating with server.')
     }
     setLoading(false)
   }
@@ -136,26 +207,17 @@ export default function ClosingStockPage() {
   // Build enriched rows with calculated closing stock
   const enrichedItems = useMemo(() => {
     return items.map((item) => {
-      const openingStock = Number(item.opening_stock ?? item.stock ?? 0) || 0
-      const currentStock = Number(item.stock ?? 0) || 0
-      // Purchases and sales will come from backend later
-      // For now, derive from difference: purchases - sales = currentStock - openingStock
-      const purchases = Number(item.purchases_in ?? 0) || 0
-      const sales = Number(item.sales_out ?? 0) || 0
       const adjustment = Number(adjustmentById[item.id] ?? item.adjustment ?? 0) || 0
-      const closingStock = openingStock + purchases - sales + adjustment
+      const closingStock = item.opening_stock_val + item.purchases_in - item.sales_out + adjustment
 
       return {
         ...item,
-        opening_stock_val: openingStock,
-        current_stock: currentStock,
-        purchases_in: purchases,
-        sales_out: sales,
         adjustment,
         closing_stock: closingStock,
       }
     })
   }, [items, adjustmentById])
+
 
   // Apply filters
   const filteredItems = useMemo(() => {
@@ -173,9 +235,10 @@ export default function ClosingStockPage() {
         .filter(Boolean)
         .map(String)
       const matchesSup = !supplierFilter || supplierTokens.includes(String(supplierFilter))
-      const matchesDate = !dateFilter || (item.created_at || '').includes(dateFilter)
+      // Backend now handles the date balancing, we show all items.
+      // const matchesDate = !dateFilter || (item.created_at || '').includes(dateFilter)
 
-      return matchesSearch && matchesCat && matchesSup && matchesDate
+      return matchesSearch && matchesCat && matchesSup
     })
   }, [enrichedItems, search, categoryFilter, supplierFilter, dateFilter])
 
@@ -244,6 +307,14 @@ export default function ClosingStockPage() {
             >
               <PrinterIcon className="h-4 w-4" />
               Print
+            </button>
+            <button
+              onClick={handleSaveSnapshot}
+              disabled={loading}
+              className="inline-flex items-center gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-[12px] font-bold text-teal-700 shadow-sm hover:bg-teal-100 transition disabled:opacity-50"
+            >
+              <SaveIcon className="h-4 w-4" />
+              Save Snapshot
             </button>
             <button
               onClick={fetchData}
