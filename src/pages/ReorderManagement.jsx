@@ -253,7 +253,7 @@ export default function ReorderManagementPage() {
           <MetricCard title="Total Value" value={`Rs. ${Number(totalValue || 0).toLocaleString()}`} tone="value" />
         </div>
 
-        <Card className="mx-auto max-w-7xl border-l-[6px] border-l-teal-500 p-4">
+        <Card className="border-l-[6px] border-l-teal-500 p-4">
           <SectionHeader
             title="Reorder List"
             description="Search, update order quantities, and manage statuses."
@@ -295,22 +295,21 @@ export default function ReorderManagementPage() {
           </div>
 
           <div className="mt-4 overflow-hidden rounded-2xl border border-slate-100">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-100 text-left">
+              <table className="w-full divide-y divide-slate-100 text-left table-fixed">
                 <thead className="bg-slate-50">
-                  <tr className="text-[12px] font-bold uppercase tracking-widest text-slate-500">
-                    <th className="px-4 py-4 w-10">
+                  <tr className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    <th className="px-2 py-3 w-[36px]">
                       <span className="sr-only">Select</span>
                     </th>
-                    <th className="px-4 py-4 w-12 text-center">#</th>
-                    <th className="px-4 py-4">ITEM NAME</th>
-                    <th className="px-4 py-4">CATEGORY</th>
-                    <th className="px-4 py-4">STOCK</th>
-                    <th className="px-4 py-4 text-center">REORDER LEVEL</th>
-                    <th className="px-4 py-4 text-center">ORDER QTY</th>
-                    <th className="px-4 py-4 text-center">STATUS</th>
-                    <th className="px-4 py-4">NOTES</th>
-                    <th className="px-4 py-4 text-right">ACTIONS</th>
+                    <th className="px-2 py-3 w-[32px] text-center">#</th>
+                    <th className="px-2 py-3">ITEM NAME</th>
+                    <th className="px-2 py-3">CATEGORY</th>
+                    <th className="px-2 py-3 w-[80px]">STOCK</th>
+                    <th className="px-2 py-3 w-[65px] text-center">REORDER LVL</th>
+                    <th className="px-2 py-3 w-[70px] text-center">ORDER QTY</th>
+                    <th className="px-2 py-3 w-[90px] text-center">STATUS</th>
+                    <th className="px-2 py-3">NOTES</th>
+                    <th className="px-2 py-3 w-[70px] text-center">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
@@ -339,7 +338,7 @@ export default function ReorderManagementPage() {
 
                       return (
                         <tr key={r.id ?? idx} className="text-[12px] transition hover:bg-slate-50/50">
-                          <td className="px-4 py-3">
+                          <td className="px-2 py-2">
                             <input
                               type="checkbox"
                               checked={!!selectedById[r.id]}
@@ -347,58 +346,57 @@ export default function ReorderManagementPage() {
                               className="h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-200"
                             />
                           </td>
-                          <td className="px-4 py-3 text-center text-slate-400">{idx + 1}</td>
-                          <td className="px-4 py-3">
-                            <div className="font-semibold text-slate-800">{r.item_name}</div>
-                            <div className="mt-0.5 max-w-[180px] truncate font-mono text-[10px] text-slate-400">{r.barcode}</div>
+                          <td className="px-2 py-2 text-center text-slate-400">{idx + 1}</td>
+                          <td className="px-2 py-2">
+                            <div className="font-semibold text-slate-800 truncate">{r.item_name}</div>
                           </td>
-                          <td className="px-4 py-3 text-slate-600">
-                            <span className="inline-flex items-center rounded-md border border-teal-100 bg-teal-50 px-2 py-0.5 text-[12px] font-semibold text-teal-700">
+                          <td className="px-2 py-2 text-slate-600">
+                            <span className="inline-flex items-center rounded-md border border-teal-100 bg-teal-50 px-1.5 py-0.5 text-[11px] font-semibold text-teal-700 truncate">
                               {r.category_name}
                             </span>
                           </td>
-                          <td className="px-4 py-3">
-                            <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-bold ${stockTone}`}>
+                          <td className="px-2 py-2">
+                            <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold ${stockTone}`}>
                               {r.stock}
                               <span className="text-[10px] font-semibold text-slate-500">{r.unit}</span>
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-center text-slate-600">{r.reorder_level}</td>
-                          <td className="px-4 py-3 text-center">
+                          <td className="px-2 py-2 text-center text-slate-600">{r.reorder_level}</td>
+                          <td className="px-2 py-2 text-center">
                             <input
                               type="number"
                               min="0"
                               value={r.order_qty}
                               onChange={(e) => setOrderQtyById((prev) => ({ ...prev, [r.id]: e.target.value }))}
-                              className="h-8 w-16 rounded-md border border-slate-300 bg-white px-2 text-[12px] text-center outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100"
+                              className="h-7 w-14 rounded-md border border-slate-300 bg-white px-1 text-[11px] text-center outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100"
                             />
                           </td>
-                          <td className="px-4 py-3 text-center">
+                          <td className="px-2 py-2 text-center">
                             <div className="relative inline-flex items-center justify-center">
                               <select
                                 value={r.status}
                                 onChange={(e) => setStatusById((prev) => ({ ...prev, [r.id]: e.target.value }))}
-                                className={`h-8 rounded-full border px-3 text-[12px] font-semibold outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100 ${statusTone}`}
+                                className={`h-7 rounded-full border px-2 text-[11px] font-semibold outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100 ${statusTone}`}
                               >
                                 <option value="pending">Pending</option>
                                 <option value="ordered">Ordered</option>
                                 <option value="received">Received</option>
                               </select>
                               <span className="pointer-events-none absolute right-2 text-slate-400">
-                                {r.status === 'ordered' ? <StatusSpinner className="h-4 w-4 animate-spin text-teal-500" /> : null}
+                                {r.status === 'ordered' ? <StatusSpinner className="h-3.5 w-3.5 animate-spin text-teal-500" /> : null}
                               </span>
                             </div>
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-2 py-2">
                             <input
                               type="text"
                               value={r.note}
                               onChange={(e) => setNoteById((prev) => ({ ...prev, [r.id]: e.target.value }))}
                               placeholder="Add notes..."
-                              className="h-8 w-56 rounded-md border border-slate-300 bg-white px-2.5 text-[12px] outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100"
+                              className="h-7 w-full rounded-md border border-slate-300 bg-white px-2 text-[11px] outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100"
                             />
                           </td>
-                          <td className="px-4 py-3 text-right">
+                          <td className="px-2 py-2 text-center">
                             <button
                               type="button"
                               onClick={() => {
@@ -419,10 +417,10 @@ export default function ReorderManagementPage() {
                                   return copy
                                 })
                               }}
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-rose-500 transition hover:bg-rose-50"
+                              className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-rose-500 transition hover:bg-rose-50"
                               title="Clear row edits"
                             >
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
                             </button>
@@ -433,7 +431,6 @@ export default function ReorderManagementPage() {
                   )}
                 </tbody>
               </table>
-            </div>
           </div>
         </Card>
       </div>
