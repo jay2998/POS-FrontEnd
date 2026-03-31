@@ -20,6 +20,12 @@ const NAV_ITEMS = [
     icon: TagIcon,
   },
   {
+    path: '/stock/reorder',
+    label: 'Reorder Management',
+    description: 'Reorder level workflow',
+    icon: ReorderListIcon,
+  },
+  {
     path: '/setup/category',
     label: 'Category',
     description: 'Primary classification',
@@ -383,6 +389,14 @@ function TagIcon({ className }) {
         strokeLinejoin="round"
         d="M7 7h.01M3 11l8.586 8.586a2 2 0 002.828 0L21 13.414a2 2 0 000-2.828L12.414 2H5a2 2 0 00-2 2v7z"
       />
+    </svg>
+  )
+}
+
+function ReorderListIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h10M7 12h10M7 17h10M5 7h.01M5 12h.01M5 17h.01" />
     </svg>
   )
 }
